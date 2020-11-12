@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_12_184429) do
+ActiveRecord::Schema.define(version: 2020_11_12_214531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,4 +25,24 @@ ActiveRecord::Schema.define(version: 2020_11_12_184429) do
     t.string "category"
   end
 
+
+  create_view "post_code_reports", sql_definition: <<-SQL
+      SELECT c.post_code,
+      count(c.id) AS total_places,
+      sum(c.chairs) AS total_chairs,
+      round(((((sum(c.chairs))::double precision / (( SELECT sum(c2.chairs) AS sum
+             FROM cafes c2))::double precision) * (100)::double precision))::numeric, 2) AS pct_chairs,
+      max((c5.name)::text) AS place_with_max_chairs
+     FROM (cafes c
+       LEFT JOIN ( SELECT c3.name,
+              c3.post_code,
+              c3.chairs
+             FROM cafes c3
+            WHERE (((c3.post_code)::text, c3.chairs) IN ( SELECT c4.post_code,
+                      max(c4.chairs) AS max
+                     FROM cafes c4
+                    GROUP BY c4.post_code))) c5 ON (((c.post_code)::text = (c5.post_code)::text)))
+    GROUP BY c.post_code
+    ORDER BY c.post_code;
+  SQL
 end
