@@ -11,10 +11,15 @@ gem 'bootsnap', '>= 1.4.2', require: false
 group :development, :test do
   gem 'pry'
   gem 'rspec-rails'
+  gem 'capybara'
+  gem 'launchy'
+  gem 'shoulda-matchers'
+  gem 'simplecov'
 end
 
 group :development do
   gem 'listen', '~> 3.2'
+  gem 'rubocop-rails', require: false
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
