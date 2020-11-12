@@ -38,6 +38,34 @@ RSpec.describe Cafe, type: :model do
           expect(cafe.category).to eq("ls1 large")
         end
       end
+      describe 'sets correct category for other prefixes' do
+        before(:each) do
+          @lso_cafe_small = {name: Faker::Restaurant.name,
+            address: Faker::Address.street_address,
+            post_code: "LS7 #{Faker::Number.number(digits: 1)}#{Faker::Alphanumeric.alpha(number: 2)}",
+            chairs: Faker::Number.number(digits: 1)}
+          @lso_cafe_medium = {name: Faker::Restaurant.name,
+            address: Faker::Address.street_address,
+            post_code: "LS8 #{Faker::Number.number(digits: 1)}#{Faker::Alphanumeric.alpha(number: 2)}",
+            chairs: Faker::Number.number(digits: 2)}
+          @lso_cafe_large = {name: Faker::Restaurant.name,
+            address: Faker::Address.street_address,
+            post_code: "LS9 #{Faker::Number.number(digits: 1)}#{Faker::Alphanumeric.alpha(number: 2)}",
+            chairs: Faker::Number.number(digits: 3)}
+        end
+        it 'sets small category' do
+          cafe = Cafe.create!(@lso_cafe_small)
+          expect(cafe.category).to eq("other")
+        end
+        it 'sets medium category' do
+          cafe = Cafe.create!(@lso_cafe_medium)
+          expect(cafe.category).to eq("other")
+        end
+        it 'sets large category' do
+          cafe = Cafe.create!(@lso_cafe_large)
+          expect(cafe.category).to eq("other")
+        end
+      end
     end
   end
 end
