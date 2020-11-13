@@ -38,9 +38,9 @@ class Cafe < ApplicationRecord
 
   def set_ls1_category
     case chairs
-    when 0..10
+    when 0..9
       'ls1 small'
-    when 11..100
+    when 10..100
       'ls1 medium'
     else
       'ls1 large'

@@ -125,13 +125,13 @@ RSpec.describe Cafe, type: :model do
       it 'delete_small_cafes' do
         small_cafes = Cafe.where("cafes.category LIKE '%small'")
         small_count = small_cafes.size
-        expect(Cafe.all.size).to eq(5)
+        expect(Cafe.all.size).to eq(4)
 
         Cafe.delete_small_cafes
 
         small_cafes.reload
         expect(small_cafes).to eq([])
-        expect(Cafe.all.size).to eq(5 - small_count)
+        expect(Cafe.all.size).to eq(4 - small_count)
       end
       it 'concatenate_med_large_cafes' do
         med_large_cafes = Cafe.where("cafes.category LIKE '%medium' OR cafes.category LIKE '%large'")
