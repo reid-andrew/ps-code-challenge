@@ -143,5 +143,52 @@ RSpec.describe Cafe, type: :model do
         end
       end
     end
+    describe 'modify cafes' do
+      before(:each) do
+        @cafe1 = Cafe.create!({name: Faker::Restaurant.name,
+          address: Faker::Address.street_address,
+          post_code: "LS1 #{Faker::Number.number(digits: 1)}#{Faker::Alphanumeric.alpha(number: 2)}",
+          chairs: Faker::Number.number(digits: 1)})
+        @cafe2 = Cafe.create!({name: Faker::Restaurant.name,
+          address: Faker::Address.street_address,
+          post_code: "LS2 #{Faker::Number.number(digits: 2)}#{Faker::Alphanumeric.alpha(number: 2)}",
+          chairs: Faker::Number.number(digits: 3)})
+        @cafe3 = Cafe.create!({name: Faker::Restaurant.name,
+          address: Faker::Address.street_address,
+          post_code: "LS2 #{Faker::Number.number(digits: 2)}#{Faker::Alphanumeric.alpha(number: 2)}",
+          chairs: Faker::Number.number(digits: 3)})
+        @cafe4 = Cafe.create!({name: Faker::Restaurant.name,
+          address: Faker::Address.street_address,
+          post_code: "LS2 #{Faker::Number.number(digits: 1)}#{Faker::Alphanumeric.alpha(number: 2)}",
+          chairs: Faker::Number.number(digits: 1)})
+        @cafe5 = Cafe.create!({name: Faker::Restaurant.name,
+          address: Faker::Address.street_address,
+          post_code: "LS9 #{Faker::Number.number(digits: 1)}#{Faker::Alphanumeric.alpha(number: 2)}",
+          chairs: Faker::Number.number(digits: 1)})
+      end
+      it 'delete_small_cafes' do
+        small_cafes = Cafe.where("cafes.category LIKE '%small'")
+        expect(small_cafes).to eq([@cafe1, @cafe4])
+        expect(Cafe.all.size).to eq(5)
+
+        Cafe.delete_small_cafes
+
+        small_cafes = Cafe.where("cafes.category LIKE '%small'")
+        expect(small_cafes).to eq([])
+        expect(Cafe.all.size).to eq(3)
+      end
+      it 'concatenate_med_large_cafes' do
+        med_large_cafes = Cafe.where("cafes.category LIKE '%medium' OR cafes.category LIKE '%large'")
+        expect(med_large_cafes).to eq([@cafe2, @cafe3])
+
+        name2 = @cafe2.name
+        name3 = @cafe3.name
+        Cafe.concatenate_med_large_cafes
+        med_large_cafes.reload
+
+        expect(med_large_cafes[0].name).to eq("ls2 large-#{name2}")
+        expect(med_large_cafes[1].name).to eq("ls2 large-#{name3}")
+      end
+    end
   end
 end
