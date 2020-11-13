@@ -8,6 +8,19 @@ class Cafe < ApplicationRecord
 
   private
 
+  def self.delete_small_cafes
+    small_cafes = Cafe.where("cafes.category LIKE '%small'")
+    small_cafes.each { |cafe| cafe.delete }
+  end
+
+  def self.concatenate_med_large_cafes
+    med_large_cafes = Cafe.where("cafes.category LIKE '%medium' OR cafes.category LIKE '%large'")
+    med_large_cafes.each do |cafe|
+      cafe.name = "#{cafe.category}-#{cafe.name}"
+      cafe.save
+    end
+  end
+
   def set_category
     category = case post_code[0..2]
     when "LS1"
