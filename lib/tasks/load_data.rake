@@ -1,7 +1,6 @@
 namespace :data do
   desc "Load data from csv file"
   task :load => :environment do
-    Rake::Task['db:migrate:reset'].invoke
     data_load(Cafe, '/public/Street Cafes 2020-21.csv')
     ActiveRecord::Base.connection.tables.each do |table|
       ActiveRecord::Base.connection.reset_pk_sequence!(table)
