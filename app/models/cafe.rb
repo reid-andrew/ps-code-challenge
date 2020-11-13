@@ -49,13 +49,17 @@ class Cafe < ApplicationRecord
     count = cafes.count
     return 'ls2 large' if count <= 1
 
-    median = if count % 2 == 0
+    median = find_median(cafes, count)
+    self.chairs < median ? 'ls2 small' : 'ls2 large'
+  end
+
+  def find_median(cafes, count)
+    if count % 2 == 0
       first_half = (cafes[0...(count/2)])
       second_half = (cafes[(count/2)..-1])
       (first_half[-1] + second_half[0]).to_f / 2.to_f
     else
       cafes[(count/2).floor]
     end
-    self.chairs < median ? 'ls2 small' : 'ls2 large'
   end
 end
