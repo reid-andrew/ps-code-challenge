@@ -1,7 +1,6 @@
-namespace :db do
-  desc "Reset database and load seeds from csv files"
-  task :reload => :environment do
-    Rake::Task['db:migrate:reset'].invoke
+namespace :data do
+  desc "Load data from csv file"
+  task :load => :environment do
     data_load(Cafe, '/public/Street Cafes 2020-21.csv')
     ActiveRecord::Base.connection.tables.each do |table|
       ActiveRecord::Base.connection.reset_pk_sequence!(table)

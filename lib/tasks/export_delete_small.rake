@@ -9,6 +9,8 @@ namespace :data do
     require 'csv'
     path = "#{Rails.root}/public/small_cafes_#{Time.now.utc}.csv"
     cafes = Cafe.where("cafes.category LIKE '%small'")
+    return if cafes.size == 0
+
     headers = ["Name", "Address", "Post_Code", "Chairs", "Category", "Created", "Updated"]
 
     CSV.open(path, 'w', write_headers: true, headers: headers) do |writer|
