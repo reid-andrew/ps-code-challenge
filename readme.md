@@ -14,10 +14,31 @@
     - total_chairs: The total number of chairs in that Post Code
     - chairs_pct: Out of all the chairs at all the Post Codes, what percentage does this Post Code represent (should sum to 100% in the whole view)
     - place_with_max_chairs: The name of the place with the most chairs in that Post Code
-    -max_chairs: The number of chairs at the place_with_max_chairs
+    - max_chairs: The number of chairs at the place_with_max_chairs
 
 #### Description of how this was verified
 I took several steps to validate the results of this view.
+
+First, I validated that the number of rows in the report matched the total number of rows when selecting distinct post codes from the cafes table, to ensure the query didn't result in any duplicate results.
+
+Second, I validated that the count of place & sum of chairs per post code was accurate by comparing with standalone queries to return those results per post code.
+
+Third, after writing the query to calculate chairs_pct, I used the entire view query as a subquery and summed the chairs_pct field to validate it equaled 100.
+
+Finally, I verified the place with the most chairs by first writing that query separately from the view query and contrasting the results. I then appended a temporary case statement to the view query to validate that (A) in post codes with one place, the max chairs equaled the amount at that one place, (B) in post codes with more than one place the max chairs was less than total chairs, & (C) that in post codes with more than one place it was mathematically not possible for there to be another cafe with more chairs. This works for all but three post codes where the largest cafe has only a plurality of chairs. I was able to manually validate those given the small size of the dataset. See below for this validation added to the main select statement of the view query.
+
+```
+CASE
+   WHEN (COUNT(c.id) = 1) AND (MAX(c5.chairs) = SUM(c.chairs)) THEN TRUE
+   WHEN (COUNT(c.id) > 1) AND (MAX(c5.chairs) < SUM(c.chairs)) THEN TRUE
+   ELSE FALSE
+END as verify_first,
+CASE
+ WHEN (COUNT(c.id) = 1) THEN 'n/a'
+ WHEN (SUM(c.chairs) - MAX(c5.chairs) < MAX(c5.chairs)) THEN 'true'
+ ELSE 'false'
+END as verify_second
+```
 
 #### SQL for #4
 ```
@@ -27,7 +48,8 @@ SELECT	c.post_code,
         ROUND(CAST((SUM(c.chairs)::float /
           (SELECT SUM(c2.chairs) FROM cafes c2) *
            100) as numeric), 2) as pct_chairs,
-        MAX(c5.name) as place_with_max_chairs
+        MAX(c5.name) as place_with_max_chairs,
+        MAX(c5.chairs) as max_chairs
 FROM cafes c
 LEFT JOIN (SELECT c3.name, c3.post_code, c3.chairs
 	FROM cafes c3
@@ -65,9 +87,9 @@ end
 
 def set_ls1_category
   case chairs
-  when 0..10
+  when 0..9
     'ls1 small'
-  when 11..100
+  when 10..100
     'ls1 medium'
   else
     'ls1 large'
