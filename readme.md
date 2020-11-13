@@ -245,6 +245,14 @@ end
 ```
 
 8) Show your work and check your email for submission instructions.
+- To set up application locally, execute the commands `bundle install`, `rails db:create` and `rails db:migrate`.
+- To run tests execute the command `bundle exec rspec`.
+- After running tests, to view test coverage report execute command `open coverage/index.html`
+- To run rake tasks, execute the following commands:
+  - To reset database & load data: `rake db:reload`
+  - To load data without first dropping/resetting database: `rake data:load`
+  - To export & delete "small" cafes : `rake data:export_small`. All "small" cafes will be removed from the database and exported to a .csv filed stored locally at: /public/small_cafes_[time exported].csv
+  - To concatenate category onto name of medium/large cafes: `rake data:rename_med_large` All medium/large cafes will be renamed.
 
 9) Celebrate, you did great!
-- Thank you! This was fun!
+- Thank you! This was fun! Looking forward next steps with your team.
