@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_12_214531) do
+ActiveRecord::Schema.define(version: 2020_11_13_154942) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,5 +44,13 @@ ActiveRecord::Schema.define(version: 2020_11_12_214531) do
                     GROUP BY c4.post_code))) c5 ON (((c.post_code)::text = (c5.post_code)::text)))
     GROUP BY c.post_code
     ORDER BY c.post_code;
+  SQL
+  create_view "aggregated_categories", sql_definition: <<-SQL
+      SELECT c.category,
+      count(c.id) AS total_places,
+      sum(c.chairs) AS total_chairs
+     FROM cafes c
+    GROUP BY c.category
+    ORDER BY c.category;
   SQL
 end
