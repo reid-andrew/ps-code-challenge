@@ -23,4 +23,8 @@ group :development do
   gem 'rubocop-rails', require: false
 end
 
+group :test do
+  gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
+end
+
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
